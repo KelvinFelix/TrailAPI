@@ -1,0 +1,62 @@
+{
+  "name": "trailapi",
+  "version": "1.0.0",
+  "description": "Professional API using Clean Architecture and TDD",
+  "license": "ISC",
+  "keywords": [
+    "clean architecture",
+    "clean code",
+    "tdd",
+    "ddd",
+    "solid",
+    "design patterns",
+    "node",
+    "typescript",
+    "jest"
+  ],
+  "author": {
+    "name": "Kelvin Felix",
+    "email": "kelvin.felix2502@gmail.com",
+    "url": "https://github.com/KelvinFelix"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "test:watch": "npm t -- --watch",
+    "test:staged": "npm t -- --findRelatedTests",
+    "test:coverage": "npm t -- --coverage"
+  },
+  "dependencies": {
+    "module-alias": "^2.2.2",
+    "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@jest-mock/express": "^1.4.4",
+    "@types/jest": "^27.0.1",
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^16.7.13",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard-with-typescript": "^21.0.1",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "husky": "^7.0.2",
+    "jest": "^27.1.1",
+    "jest-mock-extended": "^2.0.1",
+    "lint-staged": "^11.1.2",
+    "ts-jest": "^27.0.5",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.2"
+  },
+  "config": {
+    "node_version": "v20.17.0"
+  }
+}

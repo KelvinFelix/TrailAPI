@@ -1,6 +1,7 @@
 export enum TrailKind {
   LOOP = 'Loop',
-  POINT_TO_POINT = 'Point to point'
+  POINT_TO_POINT = 'Point to point',
+  OUT_AND_BACK = 'Out and back'
 }
 
 export type TrailData = {

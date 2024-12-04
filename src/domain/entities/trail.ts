@@ -5,6 +5,7 @@ export enum TrailKind {
 
 export type TrailData = {
   id: number
+  name: string
   description: string
   length: number
   elevationGain: number
@@ -14,6 +15,7 @@ export type TrailData = {
 
 export class Trail {
   id: number
+  name: string
   description: string
   length: number
   elevationGain: number
@@ -22,6 +24,7 @@ export class Trail {
 
   constructor (trailData: TrailData) {
     this.id = trailData.id
+    this.name = trailData.name
     this.description = trailData.description
     this.length = trailData.length
     this.elevationGain = trailData.elevationGain

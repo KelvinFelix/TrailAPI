@@ -14,7 +14,7 @@ describe('GetWeatherConditions', () => {
   beforeAll(() => {
     name = 'any_name'
     trailGeographicLocationRepo = mock()
-    trailGeographicLocationRepo.loadTrailGeographicLocation.mockResolvedValue(mockTrailGeographicLocation())
+    trailGeographicLocationRepo.load.mockResolvedValue(mockTrailGeographicLocation())
   })
 
   beforeEach(() => {
@@ -24,13 +24,13 @@ describe('GetWeatherConditions', () => {
   it('should call LoadTrailGeographicLocation with correct input', async () => {
     await sut({ name })
 
-    expect(trailGeographicLocationRepo.loadTrailGeographicLocation).toHaveBeenCalledWith({ name })
-    expect(trailGeographicLocationRepo.loadTrailGeographicLocation).toHaveBeenCalledTimes(1)
+    expect(trailGeographicLocationRepo.load).toHaveBeenCalledWith({ name })
+    expect(trailGeographicLocationRepo.load).toHaveBeenCalledTimes(1)
   })
 
   describe('when LoadTrailGeographicLocation returns undefined', () => {
     it('should throw ServerError', async () => {
-      trailGeographicLocationRepo.loadTrailGeographicLocation.mockResolvedValueOnce(undefined)
+      trailGeographicLocationRepo.load.mockResolvedValueOnce(undefined)
 
       const promise = sut({ name })
 

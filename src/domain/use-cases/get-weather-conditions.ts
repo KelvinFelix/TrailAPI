@@ -6,7 +6,7 @@ type Input = Pick<Trail, 'name'>
 export type GetWeatherConditions = (input: Input) => Promise<void>
 
 export const setupGetWeatherConditions: Setup = (trailGeographicLocationRepo) => async input => {
-  const trailGeographicLocation = await trailGeographicLocationRepo.loadTrailGeographicLocation(input)
+  const trailGeographicLocation = await trailGeographicLocationRepo.load(input)
   if (trailGeographicLocation === undefined) {
     throw new ServerError()
   }

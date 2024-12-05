@@ -1,7 +1,7 @@
 import { Trail, TrailGeographicLocationData } from '@/domain/entities'
 
 export interface LoadTrailGeographicLocation {
-  loadTrailGeographicLocation: (input: TrailGeographicLocation.Input) => Promise<TrailGeographicLocation.Output>
+  load: (input: TrailGeographicLocation.Input) => Promise<TrailGeographicLocation.Output>
 }
 
 namespace TrailGeographicLocation {

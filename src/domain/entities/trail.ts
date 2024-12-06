@@ -4,7 +4,7 @@ export enum TrailKind {
   OUT_AND_BACK = 'Out and back'
 }
 
-export type TrailData = {
+type TrailData = {
   id: number
   name: string
   description: string

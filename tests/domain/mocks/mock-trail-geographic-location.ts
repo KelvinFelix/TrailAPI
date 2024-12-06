@@ -1,6 +1,6 @@
-import { TrailGeographicLocationData } from '@/domain/entities'
+import { TrailGeographicLocation } from '@/domain/entities'
 
-export const mockTrailGeographicLocation = (): TrailGeographicLocationData => ({
+export const mockTrailGeographicLocation = (): TrailGeographicLocation => ({
   id: 1,
   trailId: 1,
   areaName: 'Rio de Janeiro',

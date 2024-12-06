@@ -1,6 +1,6 @@
-import { TrailKind, TrailData } from '@/domain/entities'
+import { TrailKind, Trail } from '@/domain/entities'
 
-export const mockTrail = (): TrailData => ({
+export const mockTrail = (): Trail => ({
   id: 1,
   name: 'Pedra da Gávea',
   description: 'Pedra da Gávea is the largest monolithic block by the sea in the world',

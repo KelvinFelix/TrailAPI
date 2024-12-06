@@ -1,4 +1,4 @@
-export type TrailGeographicLocationData = {
+type TrailGeographicLocationData = {
   id: number
   trailId: number
   areaName: string

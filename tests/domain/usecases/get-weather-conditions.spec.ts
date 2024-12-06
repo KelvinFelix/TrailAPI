@@ -1,7 +1,7 @@
 import { GetWeatherConditions, setupGetWeatherConditions } from '@/domain/use-cases'
 import { LoadTrailGeographicLocation } from '@/domain/contracts/repos'
 import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
-import { ServerError } from '@/domain/entities'
+import { ServerError, WeatherConditions } from '@/domain/entities'
 
 import { mockTrailGeographicLocation, mockWeatherConditions } from '@/tests/domain/mocks'
 
@@ -11,6 +11,7 @@ describe('GetWeatherConditions', () => {
   let name: string
   let trailGeographicLocationRepo: MockProxy<LoadTrailGeographicLocation>
   let weatherDataApi: MockProxy<GetWeekWeatherConditions>
+  let mockedWeatherConditions: WeatherConditions[]
   let sut: GetWeatherConditions
 
   beforeAll(() => {
@@ -19,8 +20,9 @@ describe('GetWeatherConditions', () => {
     trailGeographicLocationRepo = mock()
     trailGeographicLocationRepo.load.mockResolvedValue(mockTrailGeographicLocation())
 
+    mockedWeatherConditions = [mockWeatherConditions()]
     weatherDataApi = mock()
-    weatherDataApi.getWeekWeatherConditions.mockResolvedValue([mockWeatherConditions()])
+    weatherDataApi.getWeekWeatherConditions.mockResolvedValue(mockedWeatherConditions)
   })
 
   beforeEach(() => {
@@ -55,6 +57,12 @@ describe('GetWeatherConditions', () => {
 
       expect(weatherDataApi.getWeekWeatherConditions).toHaveBeenCalledWith(loadWeatherConditionsInput)
       expect(weatherDataApi.getWeekWeatherConditions).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return the weather conditions', async () => {
+      const weatherConditions = await sut({ name })
+
+      expect(weatherConditions).toBe(mockedWeatherConditions)
     })
   })
 })

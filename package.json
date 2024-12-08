@@ -34,7 +34,9 @@
   },
   "dependencies": {
     "module-alias": "^2.2.2",
-    "rimraf": "^3.0.2"
+    "pg": "^8.13.1",
+    "rimraf": "^3.0.2",
+    "typeorm": "^0.2.29"
   },
   "devDependencies": {
     "@jest-mock/express": "^1.4.4",
@@ -52,6 +54,7 @@
     "jest": "^27.1.1",
     "jest-mock-extended": "^2.0.1",
     "lint-staged": "^11.1.2",
+    "pg-mem": "^3.0.4",
     "ts-jest": "^27.0.5",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.4.2"

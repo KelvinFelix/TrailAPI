@@ -1,4 +1,4 @@
-import { Trail } from '@/infra/repos/postgres/entities'
+import { PgTrail } from '@/infra/repos/postgres/entities'
 import { PgConnection, ConnectionNotFoundError, TransactionNotFoundError } from '@/infra/repos/postgres/helpers'
 
 import { mocked } from 'ts-jest/utils'
@@ -176,9 +176,9 @@ describe('PgConnection', () => {
   it('should get repository from queryRunner', async () => {
     await sut.connect()
     await sut.openTransaction()
-    const repository = sut.getRepository(Trail)
+    const repository = sut.getRepository(PgTrail)
 
-    expect(getRepositorySpy).toHaveBeenCalledWith(Trail)
+    expect(getRepositorySpy).toHaveBeenCalledWith(PgTrail)
     expect(getRepositorySpy).toHaveBeenCalledTimes(1)
     expect(repository).toBe('any_repo')
 
@@ -187,9 +187,9 @@ describe('PgConnection', () => {
 
   it('should get repository', async () => {
     await sut.connect()
-    const repository = sut.getRepository(Trail)
+    const repository = sut.getRepository(PgTrail)
 
-    expect(getRepositorySpy).toHaveBeenCalledWith(Trail)
+    expect(getRepositorySpy).toHaveBeenCalledWith(PgTrail)
     expect(getRepositorySpy).toHaveBeenCalledTimes(1)
     expect(repository).toBe('any_repo')
 
@@ -198,6 +198,6 @@ describe('PgConnection', () => {
 
   it('should return ConnectionNotFoundError on getRepository if connection is not found', async () => {
     expect(getRepositorySpy).not.toHaveBeenCalled()
-    expect(() => sut.getRepository(Trail)).toThrow(new ConnectionNotFoundError())
+    expect(() => sut.getRepository(PgTrail)).toThrow(new ConnectionNotFoundError())
   })
 })

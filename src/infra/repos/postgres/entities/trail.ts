@@ -3,7 +3,7 @@ import { TrailKind } from '@/domain/entities'
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 
 @Entity({ name: 'trail' })
-export class Trail {
+export class PgTrail {
   @PrimaryGeneratedColumn()
   id!: number
 

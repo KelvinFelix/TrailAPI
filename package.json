@@ -36,7 +36,7 @@
     "module-alias": "^2.2.2",
     "pg": "^8.13.1",
     "rimraf": "^3.0.2",
-    "typeorm": "^0.2.29"
+    "typeorm": "0.2.29"
   },
   "devDependencies": {
     "@jest-mock/express": "^1.4.4",

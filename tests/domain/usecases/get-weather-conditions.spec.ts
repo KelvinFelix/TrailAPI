@@ -1,15 +1,15 @@
 import { GetWeatherConditions, setupGetWeatherConditions } from '@/domain/use-cases'
-import { LoadTrailGeographicLocation } from '@/domain/contracts/repos'
+import { LoadTrail } from '@/domain/contracts/repos'
 import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
 import { ServerError, WeatherConditions } from '@/domain/entities'
 
-import { mockTrailGeographicLocation, mockWeatherConditions } from '@/tests/domain/mocks'
+import { mockTrail, mockWeatherConditions } from '@/tests/domain/mocks'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GetWeatherConditions', () => {
   let name: string
-  let trailGeographicLocationRepo: MockProxy<LoadTrailGeographicLocation>
+  let trailRepo: MockProxy<LoadTrail>
   let weatherDataApi: MockProxy<GetWeekWeatherConditions>
   let mockedWeatherConditions: WeatherConditions[]
   let sut: GetWeatherConditions
@@ -17,8 +17,8 @@ describe('GetWeatherConditions', () => {
   beforeAll(() => {
     name = 'any_name'
 
-    trailGeographicLocationRepo = mock()
-    trailGeographicLocationRepo.load.mockResolvedValue(mockTrailGeographicLocation())
+    trailRepo = mock()
+    trailRepo.load.mockResolvedValue(mockTrail())
 
     mockedWeatherConditions = [mockWeatherConditions()]
     weatherDataApi = mock()
@@ -26,19 +26,19 @@ describe('GetWeatherConditions', () => {
   })
 
   beforeEach(() => {
-    sut = setupGetWeatherConditions(trailGeographicLocationRepo, weatherDataApi)
+    sut = setupGetWeatherConditions(trailRepo, weatherDataApi)
   })
 
-  it('should call LoadTrailGeographicLocation with correct input', async () => {
+  it('should call LoadTrail with correct input', async () => {
     await sut({ name })
 
-    expect(trailGeographicLocationRepo.load).toHaveBeenCalledWith({ name })
-    expect(trailGeographicLocationRepo.load).toHaveBeenCalledTimes(1)
+    expect(trailRepo.load).toHaveBeenCalledWith({ name })
+    expect(trailRepo.load).toHaveBeenCalledTimes(1)
   })
 
-  describe('when LoadTrailGeographicLocation returns undefined', () => {
+  describe('when LoadTrail returns undefined', () => {
     it('should throw ServerError', async () => {
-      trailGeographicLocationRepo.load.mockResolvedValueOnce(undefined)
+      trailRepo.load.mockResolvedValueOnce(undefined)
 
       const promise = sut({ name })
 
@@ -46,7 +46,7 @@ describe('GetWeatherConditions', () => {
     })
   })
 
-  describe('when LoadTrailGeographicLocation returns data', () => {
+  describe('when LoadTrail returns data', () => {
     it('should call LoadWeatherConditions with correct input', async () => {
       const loadWeatherConditionsInput = {
         latitude: -22.99708152654489,

@@ -1,13 +1,13 @@
 import { ServerError, Trail, WeatherConditions } from '@/domain/entities'
-import { LoadTrailGeographicLocation } from '@/domain/contracts/repos'
+import { LoadTrail } from '@/domain/contracts/repos'
 import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
 
-type Setup = (trailGeographicLocationRepo: LoadTrailGeographicLocation, weatherDataApi: GetWeekWeatherConditions) => GetWeatherConditions
+type Setup = (trailRepo: LoadTrail, weatherDataApi: GetWeekWeatherConditions) => GetWeatherConditions
 type Input = Pick<Trail, 'name'>
 export type GetWeatherConditions = (input: Input) => Promise<WeatherConditions[]>
 
-export const setupGetWeatherConditions: Setup = (trailGeographicLocationRepo, weatherDataApi) => async input => {
-  const trailGeographicLocation = await trailGeographicLocationRepo.load(input)
+export const setupGetWeatherConditions: Setup = (trailRepo, weatherDataApi) => async input => {
+  const trailGeographicLocation = await trailRepo.load({ name: input.name })
   if (trailGeographicLocation === undefined) {
     throw new ServerError()
   }

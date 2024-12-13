@@ -1,13 +1,15 @@
 import { PgTrail } from '@/infra/repos/postgres/entities'
 import { PgConnection, ConnectionNotFoundError, TransactionNotFoundError } from '@/infra/repos/postgres/helpers'
 
-import { mocked } from 'ts-jest/utils'
+import { mocked } from 'jest-mock'
 import { createConnection, getConnection, getConnectionManager, getRepository } from 'typeorm'
 
 jest.mock('typeorm', () => ({
   Entity: jest.fn(),
   PrimaryGeneratedColumn: jest.fn(),
   Column: jest.fn(),
+  OneToOne: jest.fn(),
+  JoinColumn: jest.fn(),
   createConnection: jest.fn(),
   getConnection: jest.fn(),
   getConnectionManager: jest.fn(),

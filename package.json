@@ -33,6 +33,7 @@
     "test:coverage": "npm t -- --coverage"
   },
   "dependencies": {
+    "axios": "^1.7.9",
     "module-alias": "^2.2.2",
     "pg": "^8.13.1",
     "rimraf": "^3.0.2",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@jest-mock/express": "^1.4.4",
+    "@types/axios": "^0.9.36",
     "@types/jest": "^27.0.1",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^16.7.13",

@@ -1,9 +1,10 @@
 import { Trail, WeatherConditions } from '@/domain/entities'
 
 export interface GetWeekWeatherConditions {
-  getWeekWeatherConditions: (input: GetWeekWeatherConditions.Input) => Promise<WeatherConditions[]>
+  getWeekWeatherConditions: (input: GetWeekWeatherConditions.Input) => Promise<GetWeekWeatherConditions.Output>
 }
 
-namespace GetWeekWeatherConditions {
+export namespace GetWeekWeatherConditions {
   export type Input = Pick<Trail, 'latitude' | 'longitude'>
+  export type Output = WeatherConditions[] | undefined
 }

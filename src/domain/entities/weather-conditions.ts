@@ -5,7 +5,7 @@ type Temperature = {
 }
 
 export type WeatherConditionsData = {
-  id: number
+  id?: number
   time: Date
   temperature: Temperature
   humidity: number
@@ -15,7 +15,7 @@ export type WeatherConditionsData = {
 }
 
 export class WeatherConditions {
-  id: number
+  id?: number
   time: Date
   temperature: Temperature
   humidity: number

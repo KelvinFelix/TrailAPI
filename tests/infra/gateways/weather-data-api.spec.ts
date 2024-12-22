@@ -1,5 +1,5 @@
 import { WeatherDataApi } from '@/infra/gateways'
-import { HttpGetClient } from '@/domain/contracts/gateways'
+import { HttpGetClient, HumanReadableDateFromUnix } from '@/domain/contracts/gateways'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -8,6 +8,7 @@ describe('WeatherDataApi', () => {
   let longitude: number
   let appid: string
   let httpClient: MockProxy<HttpGetClient>
+  let dateConverter: MockProxy<HumanReadableDateFromUnix>
   let sut: WeatherDataApi
 
   beforeAll(() => {
@@ -16,6 +17,7 @@ describe('WeatherDataApi', () => {
     appid = 'q1w2e3r4'
 
     httpClient = mock()
+    dateConverter = mock()
   })
 
   beforeEach(() => {
@@ -33,7 +35,7 @@ describe('WeatherDataApi', () => {
         summary: 'Expect a day of partly cloudy with clear spells'
       }]
     })
-    sut = new WeatherDataApi(httpClient, appid)
+    sut = new WeatherDataApi(httpClient, dateConverter, appid)
   })
 
   it('should call get to weather conditions api with the corrects params', async () => {
@@ -51,18 +53,27 @@ describe('WeatherDataApi', () => {
   })
 
   it('should return week weather conditions', async () => {
+    const dates = {
+      time: new Date(1734637035 * 1000),
+      sunrise: new Date(1734595444 * 1000),
+      sunset: new Date(1734644210 * 1000)
+    }
+    dateConverter.convertFromUnix
+      .mockReturnValueOnce(dates.time)
+      .mockReturnValueOnce(dates.sunrise)
+      .mockReturnValueOnce(dates.sunset)
     const weekWeatherConditions = await sut.getWeekWeatherConditions({ latitude, longitude })
 
     expect(weekWeatherConditions).toEqual([{
-      time: new Date(1734637035 * 1000),
+      time: dates.time,
       temperature: {
         day: 297.3,
         highest: 298.9,
         lowest: 293.4
       },
       humidity: 89,
-      sunrise: new Date(1734595444 * 1000),
-      sunset: new Date(1734644210 * 1000),
+      sunrise: dates.sunrise,
+      sunset: dates.sunset,
       summary: 'Expect a day of partly cloudy with clear spells'
     }])
   })

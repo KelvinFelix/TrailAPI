@@ -1,4 +1,4 @@
-import { GetWeekWeatherConditions, HttpGetClient } from '@/domain/contracts/gateways'
+import { GetWeekWeatherConditions, HttpGetClient, HumanReadableDateFromUnix } from '@/domain/contracts/gateways'
 
 type WeatherConditionsFromAPI = {
   dt: number
@@ -18,6 +18,7 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
 
   constructor (
     private readonly httpClient: HttpGetClient,
+    private readonly dateConverter: HumanReadableDateFromUnix,
     private readonly appid: string
   ) {}
 
@@ -32,15 +33,15 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
       }
     }).then(({ daily }) =>
       daily.map((weekdayWeatherCondition: WeatherConditionsFromAPI) => ({
-        time: new Date(weekdayWeatherCondition.dt * 1000),
+        time: this.dateConverter.convertFromUnix(weekdayWeatherCondition.dt),
         temperature: {
           day: weekdayWeatherCondition.temp.day,
           highest: weekdayWeatherCondition.temp.max,
           lowest: weekdayWeatherCondition.temp.min
         },
         humidity: weekdayWeatherCondition.humidity,
-        sunrise: new Date(weekdayWeatherCondition.sunrise * 1000),
-        sunset: new Date(weekdayWeatherCondition.sunset * 1000),
+        sunrise: this.dateConverter.convertFromUnix(weekdayWeatherCondition.sunrise),
+        sunset: this.dateConverter.convertFromUnix(weekdayWeatherCondition.sunset),
         summary: weekdayWeatherCondition.summary
       }))).catch(() => undefined)
   }

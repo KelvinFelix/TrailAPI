@@ -1,17 +1,30 @@
 import { GetWeekWeatherConditions, HttpGetClient, HumanReadableDateFromUnix } from '@/domain/contracts/gateways'
+import { WeekWeatherConditions, WeekWeatherConditionsData } from '@/domain/entities'
 
-type WeatherConditionsFromAPI = {
-  dt: number
-  temp: {
-    day: number
-    min: number
-    max: number
+export namespace DataFromAPI {
+  export type WeekDayWeatherConditions = {
+    dt: number
+    temp: {
+      day: number
+      min: number
+      max: number
+    }
+    humidity: number
+    sunrise: number
+    sunset: number
+    summary: string
   }
-  humidity: number
-  sunrise: number
-  sunset: number
-  summary: string
 }
+
+const weekDayResolver = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday'
+]
 
 export class WeatherDataApi implements GetWeekWeatherConditions {
   private readonly baseUrl = 'https://api.openweathermap.org/data/3.0/onecall'
@@ -31,18 +44,27 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
         exclude: 'hourly,minutely',
         appid: this.appid
       }
-    }).then(({ daily }) =>
-      daily.map((weekdayWeatherCondition: WeatherConditionsFromAPI) => ({
-        time: this.dateConverter.convertFromUnix(weekdayWeatherCondition.dt),
-        temperature: {
-          day: weekdayWeatherCondition.temp.day,
-          highest: weekdayWeatherCondition.temp.max,
-          lowest: weekdayWeatherCondition.temp.min
-        },
-        humidity: weekdayWeatherCondition.humidity,
-        sunrise: this.dateConverter.convertFromUnix(weekdayWeatherCondition.sunrise),
-        sunset: this.dateConverter.convertFromUnix(weekdayWeatherCondition.sunset),
-        summary: weekdayWeatherCondition.summary
-      }))).catch(() => undefined)
+    }).then(({ daily }) => new WeekWeatherConditions(
+      daily.reduce(
+        (weekWeatherConditions: Partial<WeekWeatherConditionsData>, weekDayWeatherCondition: DataFromAPI.WeekDayWeatherConditions) => {
+          const day = this.dateConverter.convertFromUnix(weekDayWeatherCondition.dt)
+          const weekdayName = weekDayResolver[day.getDay()]
+          if (weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] === undefined) {
+            weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] = {
+              time: day,
+              temperature: {
+                day: weekDayWeatherCondition.temp.day,
+                highest: weekDayWeatherCondition.temp.max,
+                lowest: weekDayWeatherCondition.temp.min
+              },
+              humidity: weekDayWeatherCondition.humidity,
+              sunrise: this.dateConverter.convertFromUnix(weekDayWeatherCondition.sunrise),
+              sunset: this.dateConverter.convertFromUnix(weekDayWeatherCondition.sunset),
+              summary: weekDayWeatherCondition.summary
+            }
+          }
+          return weekWeatherConditions
+        }, {})
+    ))
   }
 }

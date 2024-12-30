@@ -1,9 +1,9 @@
 import { GetWeatherConditions, setupGetWeatherConditions } from '@/domain/use-cases'
 import { LoadTrail } from '@/domain/contracts/repos'
 import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
-import { ServerError, WeatherConditions } from '@/domain/entities'
+import { ServerError, WeekWeatherConditions } from '@/domain/entities'
 
-import { mockTrail, mockWeatherConditions } from '@/tests/domain/mocks'
+import { mockTrail, mockWeekWeatherConditions } from '@/tests/domain/mocks'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -11,7 +11,7 @@ describe('GetWeatherConditions', () => {
   let name: string
   let trailRepo: MockProxy<LoadTrail>
   let weatherDataApi: MockProxy<GetWeekWeatherConditions>
-  let mockedWeatherConditions: WeatherConditions[]
+  let mockedWeekWeatherConditions: WeekWeatherConditions
   let sut: GetWeatherConditions
 
   beforeAll(() => {
@@ -20,9 +20,9 @@ describe('GetWeatherConditions', () => {
     trailRepo = mock()
     trailRepo.load.mockResolvedValue(mockTrail())
 
-    mockedWeatherConditions = [mockWeatherConditions()]
+    mockedWeekWeatherConditions = mockWeekWeatherConditions()
     weatherDataApi = mock()
-    weatherDataApi.getWeekWeatherConditions.mockResolvedValue(mockedWeatherConditions)
+    weatherDataApi.getWeekWeatherConditions.mockResolvedValue(mockedWeekWeatherConditions)
   })
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe('GetWeatherConditions', () => {
     it('should return the weather conditions', async () => {
       const weatherConditions = await sut({ name })
 
-      expect(weatherConditions).toBe(mockedWeatherConditions)
+      expect(weatherConditions).toBe(mockedWeekWeatherConditions)
     })
   })
 })

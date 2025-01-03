@@ -1,5 +1,5 @@
-import { WeatherDataApi, DataFromAPI } from '@/infra/gateways'
-import { HttpGetClient, HumanReadableDateFromUnix } from '@/domain/contracts/gateways'
+import { WeatherDataApi, DataFromAPI, ISODateConverter } from '@/infra/gateways'
+import { HttpGetClient, ConvertFromUnix, ConvertToISO9075Date, ConvertToISO9075Time } from '@/domain/contracts/gateways'
 import { WeekWeatherConditionsData } from '@/domain/entities'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -21,11 +21,11 @@ describe('WeatherDataApi', () => {
   let latitude: number
   let longitude: number
   let appid: string
-  let commonWeatherConditions: Partial<DataFromAPI.WeekDayWeatherConditions>
+  let commonWeatherConditions: DataFromAPI.WeekDayWeatherConditions
   let httpClient: MockProxy<HttpGetClient>
-  let dateConverter: MockProxy<HumanReadableDateFromUnix>
+  let dateConverter: ConvertFromUnix & ConvertToISO9075Date & ConvertToISO9075Time
+  let setHttpGetResponse: (data: { daily: DataFromAPI.WeekDayWeatherConditions[] }) => void
   let convertToDate: (unixFormat: number) => Date
-  let setWeekDayDates: (unixDate: number) => void
   let sut: WeatherDataApi
 
   beforeAll(() => {
@@ -33,6 +33,7 @@ describe('WeatherDataApi', () => {
     longitude = -43.28349922207635
     appid = 'q1w2e3r4'
     commonWeatherConditions = {
+      dt: weekDaysDates.sunday,
       temp: {
         day: 297.3,
         min: 293.4,
@@ -45,44 +46,18 @@ describe('WeatherDataApi', () => {
     }
 
     httpClient = mock()
-    dateConverter = mock()
-
-    convertToDate = (unixFormat: number) => new Date(unixFormat * 1000)
-    setWeekDayDates = (unixDate: number) => dateConverter.convertFromUnix.mockReturnValue(convertToDate(unixDate))
+    dateConverter = new ISODateConverter()
+    setHttpGetResponse = (data) => httpClient.get.mockResolvedValue(data)
+    convertToDate = (unixFormat) => dateConverter.convertFromUnixTime(unixFormat)
   })
 
   beforeEach(() => {
-    httpClient.get.mockResolvedValue({
+    setHttpGetResponse({
       daily: [{
         ...commonWeatherConditions,
         dt: weekDaysDates.sunday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.monday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.tuesday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.wednesday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.thursday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.friday
-      },
-      {
-        ...commonWeatherConditions,
-        dt: weekDaysDates.saturday
       }]
     })
-    dateConverter.convertFromUnix.mockReturnValue(convertToDate(1735826400))
     sut = new WeatherDataApi(httpClient, dateConverter, appid)
   })
 
@@ -101,46 +76,48 @@ describe('WeatherDataApi', () => {
   })
 
   it.each(weekDaysCases)('should return weather conditions for $weekDay', async ({ weekDay, unixDate }) => {
-    setWeekDayDates(unixDate)
+    setHttpGetResponse({
+      daily: [{
+        ...commonWeatherConditions,
+        sunrise: unixDate,
+        sunset: unixDate,
+        dt: unixDate
+      }]
+    })
 
     const weekWeatherConditions = await sut.getWeekWeatherConditions({ latitude, longitude })
 
     expect(weekWeatherConditions[weekDay as keyof WeekWeatherConditionsData]).toEqual({
-      time: convertToDate(unixDate),
+      date: dateConverter.convertToISO9075Date(convertToDate(unixDate)),
       temperature: {
         day: 297.3,
         highest: 298.9,
         lowest: 293.4
       },
       humidity: 89,
-      sunrise: convertToDate(unixDate),
-      sunset: convertToDate(unixDate),
+      sunrise: dateConverter.convertToISO9075Time(convertToDate(unixDate)),
+      sunset: dateConverter.convertToISO9075Time(convertToDate(unixDate)),
       summary: 'Expect a day of partly cloudy with clear spells'
     })
   })
 
   describe('when the service returns more than one forecast for the same week day', () => {
     it.each(weekDaysCases)('should consider the most close forecast for $weekDay', async ({ weekDay, unixDate }) => {
-      const advancedTimeInOneWeek = unixDate + 604800
-      httpClient.get.mockResolvedValueOnce({
+      setHttpGetResponse({
         daily: [{
           ...commonWeatherConditions,
           dt: unixDate
         }, {
           ...commonWeatherConditions,
-          dt: advancedTimeInOneWeek
+          dt: unixDate + 604800
         }]
       })
-      setWeekDayDates(unixDate)
-      dateConverter.convertFromUnix
-        .calledWith(advancedTimeInOneWeek)
-        .mockReturnValue(convertToDate(advancedTimeInOneWeek))
 
       const weekWeatherConditions = await sut.getWeekWeatherConditions({ latitude, longitude })
 
       expect(weekWeatherConditions[weekDay as keyof WeekWeatherConditionsData]).toEqual(
         expect.objectContaining({
-          time: convertToDate(unixDate)
+          date: dateConverter.convertToISO9075Date(convertToDate(unixDate))
         })
       )
     })

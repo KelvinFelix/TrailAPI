@@ -1,4 +1,4 @@
-import { GetWeekWeatherConditions, HttpGetClient, HumanReadableDateFromUnix } from '@/domain/contracts/gateways'
+import { GetWeekWeatherConditions, HttpGetClient, ConvertFromUnix, ConvertToISO9075Date, ConvertToISO9075Time } from '@/domain/contracts/gateways'
 import { WeekWeatherConditions, WeekWeatherConditionsData } from '@/domain/entities'
 
 export namespace DataFromAPI {
@@ -31,7 +31,7 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
 
   constructor (
     private readonly httpClient: HttpGetClient,
-    private readonly dateConverter: HumanReadableDateFromUnix,
+    private readonly dateConverter: ConvertFromUnix & ConvertToISO9075Date & ConvertToISO9075Time,
     private readonly appid: string
   ) {}
 
@@ -47,19 +47,24 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
     }).then(({ daily }) => new WeekWeatherConditions(
       daily.reduce(
         (weekWeatherConditions: Partial<WeekWeatherConditionsData>, weekDayWeatherCondition: DataFromAPI.WeekDayWeatherConditions) => {
-          const day = this.dateConverter.convertFromUnix(weekDayWeatherCondition.dt)
+          const day = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.dt)
           const weekdayName = weekDayResolver[day.getDay()]
           if (weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] === undefined) {
+            const ISODateTimeSunrise = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunrise)
+            const ISOTimeSunrise = this.dateConverter.convertToISO9075Time(ISODateTimeSunrise)
+            const ISODateTimeSunset = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunset)
+            const ISOTimeSunset = this.dateConverter.convertToISO9075Time(ISODateTimeSunset)
+
             weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] = {
-              time: day,
+              date: this.dateConverter.convertToISO9075Date(day),
               temperature: {
                 day: weekDayWeatherCondition.temp.day,
                 highest: weekDayWeatherCondition.temp.max,
                 lowest: weekDayWeatherCondition.temp.min
               },
               humidity: weekDayWeatherCondition.humidity,
-              sunrise: this.dateConverter.convertFromUnix(weekDayWeatherCondition.sunrise),
-              sunset: this.dateConverter.convertFromUnix(weekDayWeatherCondition.sunset),
+              sunrise: ISOTimeSunrise,
+              sunset: ISOTimeSunset,
               summary: weekDayWeatherCondition.summary
             }
           }

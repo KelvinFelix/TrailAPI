@@ -1,3 +1,13 @@
+type Year = `${number}${number}${number}${number}`
+type Month = `${number}${number}`
+type Day = `${number}${number}`
+export type ISODate = `${Year}-${Month}-${Day}`
+
+type Hours = `${number}${number}`
+type Minutes = `${number}${number}`
+type Seconds = `${number}${number}`
+export type ISOTime = `${Hours}:${Minutes}:${Seconds}`
+
 type Temperature = {
   day: number
   highest: number
@@ -5,27 +15,24 @@ type Temperature = {
 }
 
 export type WeatherConditionsData = {
-  id?: number
-  time: Date
+  date: ISODate
   temperature: Temperature
   humidity: number
-  sunrise: Date
-  sunset: Date
+  sunrise: ISOTime
+  sunset: ISOTime
   summary: string
 }
 
 export class WeatherConditions {
-  id?: number
-  time: Date
+  date: ISODate
   temperature: Temperature
   humidity: number
-  sunrise: Date
-  sunset: Date
+  sunrise: ISOTime
+  sunset: ISOTime
   summary: string
 
   constructor (weatherConditionsData: WeatherConditionsData) {
-    this.id = weatherConditionsData.id
-    this.time = weatherConditionsData.time
+    this.date = weatherConditionsData.date
     this.temperature = weatherConditionsData.temperature
     this.humidity = weatherConditionsData.humidity
     this.sunrise = weatherConditionsData.sunrise

@@ -1,4 +1,5 @@
 import { Controller, GetWeatherConditionsController } from '@/application/controllers'
+import { RequiredString } from '@/application/validation'
 import { ServerError, WeekWeatherConditions } from '@/domain/entities'
 import { mockWeekWeatherConditions } from '@/tests/domain/mocks'
 
@@ -21,6 +22,14 @@ describe('GetWeatherConditionsController', () => {
 
   it('should extend Controller', async () => {
     expect(sut).toBeInstanceOf(Controller)
+  })
+
+  it('should build Validators correctly', async () => {
+    const validators = sut.buildValidators({ name })
+
+    expect(validators).toEqual([
+      new RequiredString(name, 'name')
+    ])
   })
 
   it('should call GetWeatherConditionsController with correct input', async () => {

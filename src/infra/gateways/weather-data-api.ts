@@ -16,6 +16,11 @@ export namespace DataFromAPI {
   }
 }
 
+type GetWeekWeatherData = (
+  weekWeatherConditions: WeekWeatherConditionsData,
+  weekDayWeatherCondition: DataFromAPI.WeekDayWeatherConditions
+) => WeekWeatherConditionsData
+
 const weekDayResolver = [
   'sunday',
   'monday',
@@ -44,32 +49,35 @@ export class WeatherDataApi implements GetWeekWeatherConditions {
         exclude: 'hourly,minutely',
         appid: this.appid
       }
-    }).then(({ daily }) => new WeekWeatherConditions(
-      daily.reduce(
-        (weekWeatherConditions: Partial<WeekWeatherConditionsData>, weekDayWeatherCondition: DataFromAPI.WeekDayWeatherConditions) => {
-          const day = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.dt)
-          const weekdayName = weekDayResolver[day.getDay()]
-          if (weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] === undefined) {
-            const ISODateTimeSunrise = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunrise)
-            const ISOTimeSunrise = this.dateConverter.convertToISO9075Time(ISODateTimeSunrise)
-            const ISODateTimeSunset = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunset)
-            const ISOTimeSunset = this.dateConverter.convertToISO9075Time(ISODateTimeSunset)
-
-            weekWeatherConditions[weekdayName as keyof WeekWeatherConditionsData] = {
-              date: this.dateConverter.convertToISO9075Date(day),
-              temperature: {
-                day: weekDayWeatherCondition.temp.day,
-                highest: weekDayWeatherCondition.temp.max,
-                lowest: weekDayWeatherCondition.temp.min
-              },
-              humidity: weekDayWeatherCondition.humidity,
-              sunrise: ISOTimeSunrise,
-              sunset: ISOTimeSunset,
-              summary: weekDayWeatherCondition.summary
-            }
+    }).then(({ daily }) => {
+      const getWeekWeatherDataCB: GetWeekWeatherData = (weekWeatherConditions, weekDayWeatherCondition) => {
+        const day = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.dt)
+        const weekdayName = weekDayResolver[day.getDay()]
+        const index = weekdayName as keyof WeekWeatherConditionsData
+        if (weekWeatherConditions[index] === undefined) {
+          const date = this.dateConverter.convertToISO9075Date(day)
+          const ISODateTimeSunrise = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunrise)
+          const ISOTimeSunrise = this.dateConverter.convertToISO9075Time(ISODateTimeSunrise)
+          const ISODateTimeSunset = this.dateConverter.convertFromUnixTime(weekDayWeatherCondition.sunset)
+          const ISOTimeSunset = this.dateConverter.convertToISO9075Time(ISODateTimeSunset)
+          const temperature = {
+            day: weekDayWeatherCondition.temp.day,
+            highest: weekDayWeatherCondition.temp.max,
+            lowest: weekDayWeatherCondition.temp.min
           }
-          return weekWeatherConditions
-        }, {})
-    ))
+          weekWeatherConditions[index] = {
+            date,
+            temperature,
+            humidity: weekDayWeatherCondition.humidity,
+            sunrise: ISOTimeSunrise,
+            sunset: ISOTimeSunset,
+            summary: weekDayWeatherCondition.summary
+          }
+        }
+        return weekWeatherConditions
+      }
+      const weekWeatherData = daily.reduce(getWeekWeatherDataCB, {})
+      return new WeekWeatherConditions(weekWeatherData)
+    })
   }
 }

@@ -1,1 +1,1 @@
-export * from './get-weather-conditions'
+export * from './get-week-weather-conditions'

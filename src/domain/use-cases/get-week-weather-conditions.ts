@@ -1,10 +1,10 @@
-import { ServerError, Trail } from '@/domain/entities'
+import { Trail, ServerError } from '@/domain/entities'
 import { LoadTrail } from '@/domain/contracts/repos'
-import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
+import { GetWeekWeatherConditions as GetWeatherData } from '@/domain/contracts/gateways'
 
-type Setup = (trailRepo: LoadTrail, weatherDataApi: GetWeekWeatherConditions) => GetWeatherConditions
+type Setup = (trailRepo: LoadTrail, weatherDataApi: GetWeatherData) => GetWeekWeatherConditions
 type Input = Pick<Trail, 'name'>
-export type GetWeatherConditions = (input: Input) => Promise<GetWeekWeatherConditions.Output>
+export type GetWeekWeatherConditions = (input: Input) => Promise<GetWeatherData.Output>
 
 export const setupGetWeatherConditions: Setup = (trailRepo, weatherDataApi) => async input => {
   const trailGeographicLocation = await trailRepo.load({ name: input.name })

@@ -3,17 +3,17 @@ import { Validator } from '@/application/contracts'
 import { HttpResponse, ok } from '@/application/helpers'
 import { ValidationBuilder as Builder } from '@/application/validation'
 import { WeekWeatherConditions } from '@/domain/entities'
-import { GetWeatherConditions } from '@/domain/use-cases'
+import { GetWeekWeatherConditions } from '@/domain/use-cases'
 
 type HttpRequest = { name: string }
 
-export class GetWeatherConditionsController extends Controller {
-  constructor (private readonly getWeatherConditions: GetWeatherConditions) {
+export class GetWeekWeatherConditionsController extends Controller {
+  constructor (private readonly getWeekWeatherConditions: GetWeekWeatherConditions) {
     super()
   }
 
   async perform ({ name }: HttpRequest): Promise<HttpResponse<WeekWeatherConditions>> {
-    const accessToken = await this.getWeatherConditions({ name })
+    const accessToken = await this.getWeekWeatherConditions({ name })
     return ok(accessToken)
   }
 

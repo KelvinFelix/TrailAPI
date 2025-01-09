@@ -1,18 +1,18 @@
-import { GetWeatherConditions, setupGetWeatherConditions } from '@/domain/use-cases'
+import { GetWeekWeatherConditions, setupGetWeatherConditions } from '@/domain/use-cases'
 import { LoadTrail } from '@/domain/contracts/repos'
-import { GetWeekWeatherConditions } from '@/domain/contracts/gateways'
+import { GetWeekWeatherConditions as GetWeatherData } from '@/domain/contracts/gateways'
 import { ServerError, WeekWeatherConditions } from '@/domain/entities'
 
 import { mockTrail, mockWeekWeatherConditions } from '@/tests/domain/mocks'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
-describe('GetWeatherConditions', () => {
+describe('GetWeekWeatherConditions', () => {
   let name: string
   let trailRepo: MockProxy<LoadTrail>
-  let weatherDataApi: MockProxy<GetWeekWeatherConditions>
+  let weatherDataApi: MockProxy<GetWeatherData>
   let mockedWeekWeatherConditions: WeekWeatherConditions
-  let sut: GetWeatherConditions
+  let sut: GetWeekWeatherConditions
 
   beforeAll(() => {
     name = 'any_name'

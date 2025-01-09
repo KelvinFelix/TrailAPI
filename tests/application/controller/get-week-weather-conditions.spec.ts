@@ -1,23 +1,23 @@
-import { Controller, GetWeatherConditionsController } from '@/application/controllers'
+import { Controller, GetWeekWeatherConditionsController } from '@/application/controllers'
 import { RequiredString } from '@/application/validation'
 import { ServerError, WeekWeatherConditions } from '@/domain/entities'
 import { mockWeekWeatherConditions } from '@/tests/domain/mocks'
 
-describe('GetWeatherConditionsController', () => {
-  let sut: GetWeatherConditionsController
-  let getWeatherConditions: jest.Mock
+describe('GetWeekWeatherConditionsController', () => {
+  let sut: GetWeekWeatherConditionsController
+  let getWeekWeatherConditions: jest.Mock
   let name: string
   let mockedWeekWeatherConditions: WeekWeatherConditions
 
   beforeAll(() => {
     name = 'Pedra da Gávea'
     mockedWeekWeatherConditions = mockWeekWeatherConditions()
-    getWeatherConditions = jest.fn()
-    getWeatherConditions.mockResolvedValue(mockedWeekWeatherConditions)
+    getWeekWeatherConditions = jest.fn()
+    getWeekWeatherConditions.mockResolvedValue(mockedWeekWeatherConditions)
   })
 
   beforeEach(() => {
-    sut = new GetWeatherConditionsController(getWeatherConditions)
+    sut = new GetWeekWeatherConditionsController(getWeekWeatherConditions)
   })
 
   it('should extend Controller', async () => {
@@ -32,16 +32,16 @@ describe('GetWeatherConditionsController', () => {
     ])
   })
 
-  it('should call GetWeatherConditionsController with correct input', async () => {
+  it('should call GetWeekWeatherConditionsController with correct input', async () => {
     await sut.handle({ name })
 
-    expect(getWeatherConditions).toHaveBeenCalledWith({ name })
-    expect(getWeatherConditions).toHaveBeenCalledTimes(1)
+    expect(getWeekWeatherConditions).toHaveBeenCalledWith({ name })
+    expect(getWeekWeatherConditions).toHaveBeenCalledTimes(1)
   })
 
   it('should return 500 on infra error', async () => {
     const error = new Error('infra_error')
-    getWeatherConditions.mockRejectedValueOnce(error)
+    getWeekWeatherConditions.mockRejectedValueOnce(error)
 
     const httpResponse = await sut.handle({ name })
 

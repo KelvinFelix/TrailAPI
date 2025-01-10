@@ -1,4 +1,5 @@
-import { WeekWeatherConditions, ISODate, ISOTime } from '@/domain/entities'
+import { WeekWeatherConditions } from '@/domain/entities'
+import { ISODate, ISOTime } from '@/domain/common-types'
 
 import { formatISO9075 } from 'date-fns'
 

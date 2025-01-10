@@ -1,5 +1,5 @@
 import { ConvertFromUnix, ConvertToISO9075Date, ConvertToISO9075Time } from '@/domain/contracts/gateways'
-import { ISODate, ISOTime } from '@/domain/entities'
+import { ISODate, ISOTime } from '@/domain/common-types'
 
 import { fromUnixTime, formatISO9075 } from 'date-fns'
 

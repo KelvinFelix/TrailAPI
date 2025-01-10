@@ -1,4 +1,4 @@
-import { ISODate, ISOTime } from '@/domain/entities'
+import { ISODate, ISOTime } from '@/domain/common-types'
 
 export interface ConvertFromUnix {
   convertFromUnixTime: (unixTime: number) => Date

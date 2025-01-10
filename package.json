@@ -24,6 +24,9 @@
     "url": ""
   },
   "scripts": {
+    "start": "node -r dotenv/config dist/main",
+    "dev": "ts-node-dev --respawn --transpile-only --clear -r dotenv/config --inspect=0.0.0.0:9229 src/main",
+    "build": "npm run clean && tsc -p tsconfig-build.json",
     "clean": "rimraf dist",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
@@ -40,6 +43,7 @@
     "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.2",
     "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2",
     "rimraf": "^3.0.2",
     "typeorm": "0.2.29"
   },

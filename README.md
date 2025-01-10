@@ -12,11 +12,20 @@ Make sure your Node.js version is 20.17 or higher.
 In your terminal, run the command:
 
 ```js
-npm install
+npm ci
 ```
 
 ### Running
-On it, so far I've been validating my code using unit and integration tests.
+For production mode, run:
+
+```js
+npm start
+```
+
+For develop mode, run:
+```js
+npm run dev
+```
 
 ## Author
 - [Kelvin Felix](https://github.com/KelvinFelix)

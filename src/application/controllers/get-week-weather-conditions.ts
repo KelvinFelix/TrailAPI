@@ -18,7 +18,6 @@ export class GetWeekWeatherConditionsController extends Controller {
   }
 
   override buildValidators ({ name }: HttpRequest): Validator[] {
-    if (name === undefined) return []
     return [
       ...Builder.of({ value: name, fieldName: 'name' }).required().build()
     ]
